@@ -1,4 +1,5 @@
 const express = require('express')
+//router to define routes
 const router = express.Router();
 
 //exposing signup endpoint
@@ -13,6 +14,7 @@ router.post('/v1/signup',(req,res)=>{
 }
 });
 
+//exposing login endpoint
 router.post('/v1/login',(req,res)=>{
     const {username,password}=req.body;
 
@@ -24,5 +26,5 @@ router.post('/v1/login',(req,res)=>{
     }
 })
 
-
+//exporting router midlleware
 module.exports=router;
