@@ -25,7 +25,7 @@ app.get('/', (req, res) => {
 })
 
 //calling user endpoints
-app.use('/api',userRoutes);
+app.use('/api/users',userRoutes);
 
 // Define an async function to connect to the database and start
 const start = async () => {
