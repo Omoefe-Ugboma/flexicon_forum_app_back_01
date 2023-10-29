@@ -4,7 +4,6 @@ const mongoose = require('mongoose');
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
-    required: true,
     unique: true,
     minlength: 3,
     maxlength: 20
@@ -20,13 +19,24 @@ const userSchema = new mongoose.Schema({
     minlength: 8
   },
   profile: {
-    name: String,
-    bio: String,
+    name: {
+      type:String,
+       minlength:3,
+        maxlength:25
+      },
+    bio:{
+      type:String,
+       minlength:3,
+        maxlength:150
+      },
     avatar: String
   },
   activity: {
+    badge:  {type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+    },
     Thread :[{ type: mongoose.Schema.Types.ObjectId, ref: 'Thread'}],
-    badges: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Badge' }],
     community:[{ type: mongoose.Schema.Types.ObjectId, ref: 'Com' }],
     reputation: { type: Number, default: 0 }
   }
