@@ -23,6 +23,18 @@ const replySchema = new mongoose.Schema({
    votes : { 
       type : Number, 
       default :0 
+   },
+
+   Thread :{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Thread',
+      required: true
+    },
+
+   post : {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Post',
+      required: true
    }
 });
 
