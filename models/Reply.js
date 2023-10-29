@@ -11,15 +11,8 @@ const replySchema = new mongoose.Schema({
       type : mongoose.Schema.Types.ObjectId, 
       ref : 'User',
       required : true 
-   },
-   createdAt : { 
-      type : Date, 
-      default : Date.now 
-   },
-   updatedAt : { 
-      type : Date, 
-      default : Date.now 
-   },
+   }, 
+   
    votes : { 
       type : Number, 
       default :0 
@@ -36,7 +29,9 @@ const replySchema = new mongoose.Schema({
       ref: 'Post',
       required: true
    }
-});
+},
+{ timestamps : true}
+);
 
 // Create the reply model
 const Reply = mongoose.model('Reply', replySchema);

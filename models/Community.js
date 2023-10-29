@@ -11,13 +11,7 @@ const comSchema = new mongoose.Schema({
     description: {
         type: String
     },
-
-    date: {
-        
-        type: Date,
-        default: Date.now
-    },
-
+    
     creator: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
@@ -26,7 +20,9 @@ const comSchema = new mongoose.Schema({
 
     post: [{ type : mongoose.Schema.Types.ObjectId, ref : 'Post' }]
     
-})
+},
+{ timestamps : true}
+);
 
 // Create the community model
 const Com = mongoose.model('Com', comSchema);

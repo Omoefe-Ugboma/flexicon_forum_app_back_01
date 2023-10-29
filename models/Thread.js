@@ -13,7 +13,9 @@ const threadSchema = new mongoose.Schema({
 
 
     replies: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Reply' }],
-})
+},
+{ timestamps : true}
+);
 
 //create thread model
 const Thread = mongoose.model('Thread',threadSchema);

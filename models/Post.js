@@ -23,14 +23,7 @@ const postSchema = new mongoose.Schema({
     required: true
   },
   tags: [String],
-  createdAt: {
-    type: Date,
-    default: Date.now
-  },
-  updatedAt: {
-    type: Date,
-    default: Date.now
-  },
+
   votes: {
     type: Number,
     default: 0
@@ -43,7 +36,9 @@ const postSchema = new mongoose.Schema({
   },
   
   replies:[{ type : mongoose.Schema.Types.ObjectId, ref : 'Reply' }]
-});
+},
+{ timestamps : true}
+);
 
 // Create the post model
 const Post = mongoose.model('Post', postSchema);

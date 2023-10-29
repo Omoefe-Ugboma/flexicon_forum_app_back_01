@@ -20,7 +20,9 @@ const badgeSchema = new mongoose.Schema({
       type : String, 
       required : true 
    }
-});
+},
+{ timestamps : true}
+);
 
 // Create the badge model
 const Badge = mongoose.model('Badge', badgeSchema);
