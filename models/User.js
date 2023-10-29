@@ -36,8 +36,8 @@ const userSchema = new mongoose.Schema({
     ref: 'User',
     required: true
     },
-    Thread :[{ type: mongoose.Schema.Types.ObjectId, ref: 'Thread'}],
-    community:[{ type: mongoose.Schema.Types.ObjectId, ref: 'Com' }],
+    threads :[{ type: mongoose.Schema.Types.ObjectId, ref: 'Thread'}],
+    communities:[{ type: mongoose.Schema.Types.ObjectId, ref: 'Com' }],
     reputation: { type: Number, default: 0 }
   }
 },
