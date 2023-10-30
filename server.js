@@ -10,6 +10,9 @@ const app = express()
 // Import connect function from db/connect.js file
 const connectDB = require('./db/connect')
 
+//Import errorHandler middleware
+const errorHandler = require('./middleware/errorHandler')
+
 // Define the port numnber for the server
 const port = process.env.PORT || 3000
 
@@ -26,6 +29,9 @@ app.get('/', (req, res) => {
 
 //calling user endpoints
 app.use('/api/users',userRoutes);
+
+//middleware to handle errors
+app.use(errorHandler)
 
 // Define an async function to connect to the database and start
 const start = async () => {

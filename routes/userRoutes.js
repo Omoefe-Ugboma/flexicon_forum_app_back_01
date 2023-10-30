@@ -1,30 +1,16 @@
 const express = require('express')
+
+const {signup, login} = require('../controllers/authentication')
+
 //router to define routes
-const router = express.Router();
+const Router = express.Router()
 
 //exposing signup endpoint
-router.post('/v1/signup',(req,res)=>{
-    const{username,password}= req.body;
-    try {
-    return res.status(201).json({message:'user created successfully'});
-    
-
-} catch (error) {
-    console.error(error).json({error:'internal server errors'})
-}
-});
+Router.route('/v1/signup').post(signup)
 
 //exposing login endpoint
-router.post('/v1/login',(req,res)=>{
-    const {username,password}=req.body;
+Router.route('/v1/login').post(login)
 
-    try {
-        return res.status(200).json({message:'user login successful'})
-    } catch (error) {
-        console.error(error).json({error:'internal server error'})
-        
-    }
-})
 
-//exporting router midlleware
-module.exports=router;
+//exporting router middleware
+module.exports = Router
