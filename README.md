@@ -21,7 +21,8 @@ To facilitate testing during development, a postman collection with requests to 
 
 1. Import the collection by going to the file menu option and selecting the import option (shortcut is  ctrl-O on windows and cmd-O on mac). 
 2. You can either drag and drop the file or copy and paste the contents of the file into the provided fields.
-3. The collection and all sub-folders and requests will be loaded into the workspace. 
+3. The collection and all sub-folders and requests will be loaded into the workspace.
+4. You can now access the collection from the left sidebar under Collections. You can expand or collapse the collection to see the folders, requests, scripts and tests inside it. You can also run the collection as a whole or individually by clicking on the Run button next to the collection name or request name respectively.
 
 #### Contributing
 If you want to contribute to this project, you are welcome to do so. Here are some ways you can help:
