@@ -34,7 +34,7 @@ const userSchema = new mongoose.Schema({
   activity: {
     badge:  {type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: true
+    // required: true
     },
     threads :[{ type: mongoose.Schema.Types.ObjectId, ref: 'Thread'}],
     communities:[{ type: mongoose.Schema.Types.ObjectId, ref: 'Com' }],
