@@ -5,6 +5,7 @@ This Forum Project is an ambitious endeavor by Flexicon Technology, designed to 
 ## Table of Contents
 * Installation
 * Contributing
+* Testing
 * License
 
 #### Installation
@@ -14,6 +15,14 @@ To install this project, you need to have Node.js and npm installed on your syst
 2. Navigate to the project folder using '*cd flexicon_forum_app_back_01*'.
 3. Install the dependencies using npm install.
 4. Run the project using npm start.
+
+#### Testing
+To facilitate testing during development, a postman collection with requests to all major endpoints is included in the repository as 'FSHub_API.postman_collection.json'. To make use of the collection, you will need to:
+
+1. Import the collection by going to the file menu option and selecting the import option (shortcut is  ctrl-O on windows and cmd-O on mac). 
+2. You can either drag and drop the file or copy and paste the contents of the file into the provided fields.
+3. The collection and all sub-folders and requests will be loaded into the workspace.
+4. You can now access the collection from the left sidebar under Collections. You can expand or collapse the collection to see the folders, requests, scripts and tests inside it. You can also run the collection as a whole or individually by clicking on the Run button next to the collection name or request name respectively.
 
 #### Contributing
 If you want to contribute to this project, you are welcome to do so. Here are some ways you can help:
