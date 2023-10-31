@@ -24,8 +24,10 @@
   },
   "homepage": "https://github.com/Omoefe-Ugboma/flexicon_forum_app_back_01#readme",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2",
     "mongoose": "^7.6.3"
   },
   "devDependencies": {

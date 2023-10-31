@@ -23,6 +23,11 @@ If you want to contribute to this project, you are welcome to do so. Here are so
 * Suggest new features or enhancements using the feature request template.
 * Share this project with your friends or colleagues who might find it useful or interesting.
 
+### Note
+In the User model a createJWT method was created, which creates a token for a user. In the method, the following variables from the env were used JWT_SECRET and JWT_LIFETIME.
+Endeavour to create these variables in your own env file and assign appropriate values.
+Also create a MONGO_URI variable in your env file and assign an appropriate database string.
+
 #### License
 This project is licensed under the MIT License. See the LICENSE file for more details.
 
