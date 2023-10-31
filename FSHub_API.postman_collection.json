@@ -212,6 +212,9 @@
 									"postman.setEnvironmentVariable(\"accessToken\", newAccessToken);",
 									"}",
 									"",
+									"pm.test(\"Successful DELETE request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 202, 204]);",
+									"});",
 									""
 								],
 								"type": "text/javascript"
@@ -545,7 +548,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"creator\": \"Mobile Development with Flutter\",\n    \"description\": \"Connect with mobile app developers from around the world. Discuss iOS, Android, and cross-platform app development here.\"\n}",
+							"raw": "",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -650,7 +653,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"AI and Machine Learning Think Tank\",\n    \"description\": \"Join the AI and Machine Learning Think Tank to explore the latest trends, algorithms, and applications in AI and ML.\"\n}",
+							"raw": "{\n    \"posts\": [{{postId}}],\n    \"replies\": [{{replyId}}]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
