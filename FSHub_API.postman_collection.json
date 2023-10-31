@@ -12,43 +12,60 @@
 			"item": [
 				{
 					"name": "Create User",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"email\": \"{{email}}\",\n    \"password\": \"{{password}}\",\n    \"passwordConfirmation\": \"{{password}}\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const email = pm.environment.replaceIn(\"{{$randomEmail}}\");\r",
+									"const password = pm.environment.replaceIn(\"{{$randomPassword}}\");\r",
+									"\r",
+									"pm.environment.set(\"email\", email);\r",
+									"pm.environment.set(\"password\", password);"
+								],
+								"type": "text/javascript"
 							}
 						},
-						"url": {
-							"raw": "{{endpoint}}/api/v1/users",
-							"host": [
-								"{{endpoint}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"users"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Create Session",
-					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
-									"var jsonData = JSON.parse(responseBody);",
-									"console.log(jsonData)",
-									"postman.setEnvironmentVariable(\"accessToken\", jsonData.accessToken);",
-									"postman.setEnvironmentVariable(\"refreshToken\", jsonData.refreshToken);"
+									"pm.test(\"Successful POST request\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response has the required field - token\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    \r",
+									"    pm.expect(responseData).to.be.an('object');\r",
+									"    pm.expect(responseData.token).to.exist.and.to.be.a('string');\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Token is a non-empty string\", function () {\r",
+									"  const responseData = pm.response.json();\r",
+									"  \r",
+									"  pm.expect(responseData.token).to.exist.and.to.be.a('string').and.to.have.lengthOf.at.least(1, \"Token should not be empty\");\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Token is in a valid format\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    \r",
+									"    pm.expect(responseData.token).to.match(/^[a-zA-Z0-9]+$/, \"Token should contain only alphanumeric characters\");\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response time is within an acceptable range\", function () {\r",
+									"  pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+									"});\r",
+									"\r",
+									""
 								],
 								"type": "text/javascript"
 							}
@@ -67,14 +84,62 @@
 							}
 						},
 						"url": {
-							"raw": "{{endpoint}}/api/v1/sessions",
+							"raw": "{{endpoint}}/api/users/v1/signup",
 							"host": [
 								"{{endpoint}}"
 							],
 							"path": [
 								"api",
+								"users",
 								"v1",
-								"sessions"
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Session",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"console.log(jsonData)",
+									"postman.setEnvironmentVariable(\"accessToken\", jsonData.accessToken);",
+									"postman.setEnvironmentVariable(\"refreshToken\", jsonData.refreshToken);",
+									"",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"{{email}}\",\n    \"password\": \"{{password}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{endpoint}}/api/users/v1/login",
+							"host": [
+								"{{endpoint}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"v1",
+								"login"
 							]
 						}
 					},
@@ -198,7 +263,7 @@
 							"script": {
 								"exec": [
 									"var jsonData = JSON.parse(responseBody);",
-									"postman.setEnvironmentVariable(\"communityId\", jsonData.communityId);",
+									"postman.setEnvironmentVariable(\"communityId\", jsonData._id);",
 									"",
 									"",
 									"const newAccessToken = responseHeaders['x-access-token']",
@@ -206,7 +271,11 @@
 									"if(newAccessToken){",
 									"    console.log('Set new access token')",
 									"postman.setEnvironmentVariable(\"accessToken\", newAccessToken);",
-									"}"
+									"}",
+									"",
+									"pm.test(\"Successful POST request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+									"});"
 								],
 								"type": "text/javascript"
 							}
@@ -241,13 +310,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{endpoint}}/api/community",
+							"raw": "{{endpoint}}/api/communities",
 							"host": [
 								"{{endpoint}}"
 							],
 							"path": [
 								"api",
-								"community"
+								"communities"
 							]
 						}
 					},
@@ -282,13 +351,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{endpoint}}/api/community/{{communityId}}",
+							"raw": "{{endpoint}}/api/communities/{{communityId}}",
 							"host": [
 								"{{endpoint}}"
 							],
 							"path": [
 								"api",
-								"community",
+								"communities",
 								"{{communityId}}"
 							]
 						}
@@ -307,7 +376,11 @@
 									"if(newAccessToken){",
 									"    console.log('Set new access token')",
 									"postman.setEnvironmentVariable(\"accessToken\", newAccessToken);",
-									"}"
+									"}",
+									"",
+									"pm.test(\"Successful PUT request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+									"});"
 								],
 								"type": "text/javascript"
 							}
@@ -342,13 +415,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{endpoint}}/api/community/{{communityId}}",
+							"raw": "{{endpoint}}/api/communities/{{communityId}}",
 							"host": [
 								"{{endpoint}}"
 							],
 							"path": [
 								"api",
-								"community",
+								"communities",
 								"{{communityId}}"
 							]
 						}
@@ -367,7 +440,12 @@
 									"if(newAccessToken){",
 									"    console.log('Set new access token')",
 									"postman.setEnvironmentVariable(\"accessToken\", newAccessToken);",
-									"}"
+									"}",
+									"",
+									"pm.test(\"Successful DELETE request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 202, 204]);",
+									"});",
+									""
 								],
 								"type": "text/javascript"
 							}
@@ -402,13 +480,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{endpoint}}/api/community/{{communityId}}",
+							"raw": "{{endpoint}}/api/communities/{{communityId}}",
 							"host": [
 								"{{endpoint}}"
 							],
 							"path": [
 								"api",
-								"community",
+								"communities",
 								"{{communityId}}"
 							]
 						}
@@ -428,7 +506,7 @@
 							"script": {
 								"exec": [
 									"var jsonData = JSON.parse(responseBody);",
-									"postman.setEnvironmentVariable(\"communityId\", jsonData.communityId);",
+									"postman.setEnvironmentVariable(\"threadId\", jsonData._id);",
 									"",
 									"",
 									"const newAccessToken = responseHeaders['x-access-token']",
@@ -436,7 +514,11 @@
 									"if(newAccessToken){",
 									"    console.log('Set new access token')",
 									"postman.setEnvironmentVariable(\"accessToken\", newAccessToken);",
-									"}"
+									"}",
+									"",
+									"pm.test(\"Successful POST request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+									"});"
 								],
 								"type": "text/javascript"
 							}
@@ -463,7 +545,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"Mobile Development with Flutter\",\n    \"description\": \"Connect with mobile app developers from around the world. Discuss iOS, Android, and cross-platform app development here.\"\n}",
+							"raw": "{\n    \"creator\": \"Mobile Development with Flutter\",\n    \"description\": \"Connect with mobile app developers from around the world. Discuss iOS, Android, and cross-platform app development here.\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -471,13 +553,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{endpoint}}/api/community",
+							"raw": "{{endpoint}}/api/threads",
 							"host": [
 								"{{endpoint}}"
 							],
 							"path": [
 								"api",
-								"community"
+								"threads"
 							]
 						}
 					},
@@ -512,14 +594,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{endpoint}}/api/community/{{communityId}}",
+							"raw": "{{endpoint}}/api/threads/{{threadId}}",
 							"host": [
 								"{{endpoint}}"
 							],
 							"path": [
 								"api",
-								"community",
-								"{{communityId}}"
+								"threads",
+								"{{threadId}}"
 							]
 						}
 					},
@@ -537,7 +619,11 @@
 									"if(newAccessToken){",
 									"    console.log('Set new access token')",
 									"postman.setEnvironmentVariable(\"accessToken\", newAccessToken);",
-									"}"
+									"}",
+									"",
+									"pm.test(\"Successful PUT request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+									"});"
 								],
 								"type": "text/javascript"
 							}
@@ -572,14 +658,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{endpoint}}/api/community/{{communityId}}",
+							"raw": "{{endpoint}}/api/threads/{{threadId}}",
 							"host": [
 								"{{endpoint}}"
 							],
 							"path": [
 								"api",
-								"community",
-								"{{communityId}}"
+								"threads",
+								"{{threadId}}"
 							]
 						}
 					},
@@ -597,7 +683,12 @@
 									"if(newAccessToken){",
 									"    console.log('Set new access token')",
 									"postman.setEnvironmentVariable(\"accessToken\", newAccessToken);",
-									"}"
+									"}",
+									"",
+									"pm.test(\"Successful DELETE request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 202, 204]);",
+									"});",
+									""
 								],
 								"type": "text/javascript"
 							}
@@ -632,14 +723,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{endpoint}}/api/community/{{communityId}}",
+							"raw": "{{endpoint}}/api/threads/{{threadId}}",
 							"host": [
 								"{{endpoint}}"
 							],
 							"path": [
 								"api",
-								"community",
-								"{{communityId}}"
+								"threads",
+								"{{threadId}}"
 							]
 						}
 					},
@@ -658,7 +749,7 @@
 							"script": {
 								"exec": [
 									"var jsonData = JSON.parse(responseBody);",
-									"postman.setEnvironmentVariable(\"communityId\", jsonData.communityId);",
+									"postman.setEnvironmentVariable(\"postId\", jsonData._id);",
 									"",
 									"",
 									"const newAccessToken = responseHeaders['x-access-token']",
@@ -666,7 +757,11 @@
 									"if(newAccessToken){",
 									"    console.log('Set new access token')",
 									"postman.setEnvironmentVariable(\"accessToken\", newAccessToken);",
-									"}"
+									"}",
+									"",
+									"pm.test(\"Successful POST request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+									"});"
 								],
 								"type": "text/javascript"
 							}
@@ -693,7 +788,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"Mobile Development with Flutter\",\n    \"description\": \"Connect with mobile app developers from around the world. Discuss iOS, Android, and cross-platform app development here.\"\n}",
+							"raw": "{\n    \"title\": \"Mobile Development with Flutter\",\n    \"content\": \"Connect with mobile app developers from around the world. Discuss iOS, Android, and cross-platform app development here.\",\n    // \"author\": {{userId}},\n    \"category\": \"Mobile Development\",\n    \"thread\": {{threadId}}\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -701,13 +796,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{endpoint}}/api/community",
+							"raw": "{{endpoint}}/api/posts",
 							"host": [
 								"{{endpoint}}"
 							],
 							"path": [
 								"api",
-								"community"
+								"posts"
 							]
 						}
 					},
@@ -734,7 +829,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\": \"A post title\",\n    \"body\": \"Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text\"\n}",
+							"raw": "",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -742,14 +837,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{endpoint}}/api/community/{{communityId}}",
+							"raw": "{{endpoint}}/api/posts/{{postId}}",
 							"host": [
 								"{{endpoint}}"
 							],
 							"path": [
 								"api",
-								"community",
-								"{{communityId}}"
+								"posts",
+								"{{postId}}"
 							]
 						}
 					},
@@ -767,7 +862,11 @@
 									"if(newAccessToken){",
 									"    console.log('Set new access token')",
 									"postman.setEnvironmentVariable(\"accessToken\", newAccessToken);",
-									"}"
+									"}",
+									"",
+									"pm.test(\"Successful PUT request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+									"});"
 								],
 								"type": "text/javascript"
 							}
@@ -802,14 +901,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{endpoint}}/api/community/{{communityId}}",
+							"raw": "{{endpoint}}/api/posts/{{postId}}",
 							"host": [
 								"{{endpoint}}"
 							],
 							"path": [
 								"api",
-								"community",
-								"{{communityId}}"
+								"posts",
+								"{{postId}}"
 							]
 						}
 					},
@@ -827,7 +926,12 @@
 									"if(newAccessToken){",
 									"    console.log('Set new access token')",
 									"postman.setEnvironmentVariable(\"accessToken\", newAccessToken);",
-									"}"
+									"}",
+									"",
+									"pm.test(\"Successful DELETE request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 202, 204]);",
+									"});",
+									""
 								],
 								"type": "text/javascript"
 							}
@@ -854,7 +958,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\": \"A post title\",\n    \"body\": \"Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text\"\n}",
+							"raw": "",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -862,14 +966,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{endpoint}}/api/community/{{communityId}}",
+							"raw": "{{endpoint}}/api/posts/{{postId}}",
 							"host": [
 								"{{endpoint}}"
 							],
 							"path": [
 								"api",
-								"community",
-								"{{communityId}}"
+								"posts",
+								"{{postId}}"
 							]
 						}
 					},
@@ -888,7 +992,7 @@
 							"script": {
 								"exec": [
 									"var jsonData = JSON.parse(responseBody);",
-									"postman.setEnvironmentVariable(\"communityId\", jsonData.communityId);",
+									"postman.setEnvironmentVariable(\"replyId\", jsonData._id);",
 									"",
 									"",
 									"const newAccessToken = responseHeaders['x-access-token']",
@@ -896,7 +1000,11 @@
 									"if(newAccessToken){",
 									"    console.log('Set new access token')",
 									"postman.setEnvironmentVariable(\"accessToken\", newAccessToken);",
-									"}"
+									"}",
+									"",
+									"pm.test(\"Successful POST request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([201, 202]);",
+									"});"
 								],
 								"type": "text/javascript"
 							}
@@ -923,7 +1031,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"Mobile Development with Flutter\",\n    \"description\": \"Connect with mobile app developers from around the world. Discuss iOS, Android, and cross-platform app development here.\"\n}",
+							"raw": "{\n    \"content\": \"{{$randomLoremParagraph}}\",\n    \"thread\": {{threadId}},\n    \"post\": {{postId}}\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -931,13 +1039,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{endpoint}}/api/community",
+							"raw": "{{endpoint}}/api/replies",
 							"host": [
 								"{{endpoint}}"
 							],
 							"path": [
 								"api",
-								"community"
+								"replies"
 							]
 						}
 					},
@@ -964,7 +1072,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\": \"A post title\",\n    \"body\": \"Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text\"\n}",
+							"raw": "",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -972,14 +1080,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{endpoint}}/api/community/{{communityId}}",
+							"raw": "{{endpoint}}/api/replies/{{replyId}}",
 							"host": [
 								"{{endpoint}}"
 							],
 							"path": [
 								"api",
-								"community",
-								"{{communityId}}"
+								"replies",
+								"{{replyId}}"
 							]
 						}
 					},
@@ -1024,7 +1132,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"AI and Machine Learning Think Tank\",\n    \"description\": \"Join the AI and Machine Learning Think Tank to explore the latest trends, algorithms, and applications in AI and ML.\"\n}",
+							"raw": "{\n    \"content\": {{$randomLoremParagraph}},\n    \"thread\": {{threadId}},\n    \"post\": {{postId}}\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1032,14 +1140,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{endpoint}}/api/community/{{communityId}}",
+							"raw": "{{endpoint}}/api/replies/{{replyId}}",
 							"host": [
 								"{{endpoint}}"
 							],
 							"path": [
 								"api",
-								"community",
-								"{{communityId}}"
+								"replies",
+								"{{replyId}}"
 							]
 						}
 					},
@@ -1084,7 +1192,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\": \"A post title\",\n    \"body\": \"Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text\"\n}",
+							"raw": "",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1092,14 +1200,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{endpoint}}/api/community/{{communityId}}",
+							"raw": "{{endpoint}}/api/replies/{{replyId}}",
 							"host": [
 								"{{endpoint}}"
 							],
 							"path": [
 								"api",
-								"community",
-								"{{communityId}}"
+								"replies",
+								"{{replyId}}"
 							]
 						}
 					},
@@ -1116,12 +1224,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:9100/metrics",
-							"protocol": "http",
+							"raw": "{{endpoint}}/metrics",
 							"host": [
-								"localhost"
+								"{{endpoint}}"
 							],
-							"port": "9100",
 							"path": [
 								"metrics"
 							]
