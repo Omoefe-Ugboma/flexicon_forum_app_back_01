@@ -1,12 +1,9 @@
-const mongoose = require('mongoose')
 const User = require('../models/User')
 
 // Define a function to handle user sign-up
 const signup = async(req,res)=>{
     try{
-        const {email,password} = req.body
-
-        console.log(req.body)
+        const {email,password} = req.body               
 
         //check if email and password were inputted
         if(!email || !password){
@@ -21,9 +18,9 @@ const signup = async(req,res)=>{
 
         // Create a new user and generate a token
         const user = await User.create(req.body)
-        const token = user.createJWT()
+        const accessToken = user.createJWT()
 
-        return res.status(201).json({token})
+        return res.status(201).json({accessToken})
 
     }catch(error){
         // Handle errors
@@ -35,8 +32,7 @@ const signup = async(req,res)=>{
 // Define a function to handle user login
 const login = async(req,res)=>{
     try{
-        const {email, password} = req.body
-        console.log(req.body)
+        const {email, password} = req.body        
         
         // Check if email and password were inputted
         if(!email || !password){
@@ -60,8 +56,8 @@ const login = async(req,res)=>{
         }
 
         // Generate a token and send it in the response
-        const token = user.createJWT()
-        return res.status(200).json({token})
+        const accessToken = user.createJWT()
+        return res.status(200).json({accessToken})
 
     }catch(error){
         // Handle errors
