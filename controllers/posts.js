@@ -28,11 +28,16 @@ const makePosts = async(req,res)=>{
  }
 
  const getPostById = async (req, res) => {
+    const postId = req.params.id;
     try {
-      const posts = await Post.find();
-      res.json(posts);
+      const post = await Post.findById(postId);
+      if (post) {
+        res.json(post);
+      } else {
+        res.status(404).json({ message: 'Post not found' });
+      }
     } catch (error) {
-      res.status(500).json({ message: 'Error fetching posts' });
+      res.status(500).json({ message: 'Error fetching post' });
     }
   };
 
