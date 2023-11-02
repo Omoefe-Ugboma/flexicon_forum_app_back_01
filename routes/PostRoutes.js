@@ -9,4 +9,7 @@ Router.route('/').post(makePosts)
 
 
 // //endpoint for getting all posts
-Router.route('/').get(getPostById)
+Router.route('/:id').get(getPostById)
+
+
+module.exports = Router
