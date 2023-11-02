@@ -18,6 +18,8 @@ app.use(express.json())
 
 //import userRoutes
 const userRoutes = require('./routes/userRoutes')
+const threadRoutes = require('./routes/threadRoutes')
+const { verifyUser } = require('./middleware/jwt')
 
 // Send a welcome message to the client
 app.get('/', (req, res) => {
@@ -25,7 +27,8 @@ app.get('/', (req, res) => {
 })
 
 //calling user endpoints
-app.use('/api/users',userRoutes);
+app.use('/api/users', userRoutes)
+app.use('/api/threads', verifyUser, threadRoutes)
 
 // Define an async function to connect to the database and start
 const start = async () => {
