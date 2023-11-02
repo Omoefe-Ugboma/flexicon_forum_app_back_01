@@ -8,7 +8,7 @@ const badgeSchema = new mongoose.Schema({
       required : true,
       unique : true
    },
-   description : { 
+   description : {
       type : String,
       required : true 
    },
