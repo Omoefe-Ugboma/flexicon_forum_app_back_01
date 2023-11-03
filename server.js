@@ -19,6 +19,9 @@ app.use(express.json())
 //import userRoutes
 const userRoutes = require('./routes/userRoutes')
 
+//import commRoutes
+const commRoutes = require('./routes/commRoutes')
+
 // Send a welcome message to the client
 app.get('/', (req, res) => {
   res.status(200).send('Welcome to our Server')
@@ -26,6 +29,10 @@ app.get('/', (req, res) => {
 
 //calling user endpoints
 app.use('/api/users',userRoutes);
+
+//calling community endpoints
+app.use('/api/community',commRoutes)
+
 
 // Define an async function to connect to the database and start
 const start = async () => {
