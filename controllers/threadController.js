@@ -3,7 +3,7 @@ const User = require('../models/User')
 
 const createThread = async (req, res) => {
   const userId = req.user.userId
-  const user = await User.findById({ _id: userId })
+  const user = await User.findById(userId)
 
   const thread = new Thread({
     Creator: user,
@@ -11,9 +11,14 @@ const createThread = async (req, res) => {
     replies: [],
   })
 
-  const savedThread = await thread.save()
-  console.log(savedThread)
-  res.json(savedThread)
+  try {
+    const savedThread = await thread.save() // save the thread in the database
+    user.activity.threads.push(savedThread) // update user activity with new thread
+    await user.save() // save updated user
+    res.status(201).json(savedThread)
+  } catch (err) {
+    return res.status(500).json(err.message)
+  }
 }
 
 const getAllThreads = async (req, res) => {
@@ -39,14 +44,22 @@ const getThreadById = async (req, res) => {
   }
 }
 
-const updateThread = (req, res) => {}
-
-const deleteThread = (req, res) => {}
+const deleteThread = async (req, res) => {
+  const threadId = req.params.threadId
+  Thread.findByIdAndDelete(threadId)
+    .then(thread => {
+      if (!thread) return res.status(404).json({ message: 'Thread not found' })
+      console.log(thread)
+      res.json({ message: 'Thread deleted' })
+    })
+    .catch(error => {
+      res.status(500).json({ message: error.message })
+    })
+}
 
 module.exports = {
   createThread,
   getAllThreads,
   getThreadById,
-  updateThread,
   deleteThread,
 }
