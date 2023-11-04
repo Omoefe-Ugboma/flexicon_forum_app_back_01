@@ -1,6 +1,6 @@
 const express = require('express')
 
-const {signup, login} = require('../controllers/authentication')
+const {signup, login} = require('../controllers/authController')
 
 //router to define routes
 const Router = express.Router()

@@ -29,7 +29,7 @@ const postSchema = new mongoose.Schema({
     default: 0
   },
 
-  Thread :{
+  thread :{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Thread',
     required: true
