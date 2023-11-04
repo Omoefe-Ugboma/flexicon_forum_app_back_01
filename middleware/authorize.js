@@ -14,7 +14,7 @@ const authorize = (req,res,next)=>{
         next()
 
     }catch(error){
-        res.status(401).json({msg:"Authentication Issues"})
+        res.status(401).json({msg:"Authentication Error"})
     }
 
 }

@@ -23,13 +23,8 @@ const getComms = async(req, res)=>{
 const getAComm = async(req, res)=>{
     try{
         const{id:commId} = req.params
-        const comm = await Comm.findById({_id: commId})
+        const comm = await Comm.findById({_id: commId})        
         
-        // const {name} = req.body
-        // if(!name){
-        //     return res.status(400).json({msg: "Please provide the name of the community"})
-        // }
-        // const comm = await Comm.findOne({name})
         if(!comm){
             return res.status(401).json({msg: "This community does not exist"})
         }
