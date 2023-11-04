@@ -22,16 +22,16 @@ const getComms = async(req, res)=>{
 // Define a function to get a community
 const getAComm = async(req, res)=>{
     try{
-        // const{id:commId} = req.params
-        // const comm = await Comm.findOne({_id: commId})
+        const{id:commId} = req.params
+        const comm = await Comm.findById({_id: commId})
         
-        const {name} = req.body
-        if(!name){
-            return res.status(400).json({msg: "Please provide the name of the community"})
-        }
-        const comm = await Comm.findOne({name})
+        // const {name} = req.body
+        // if(!name){
+        //     return res.status(400).json({msg: "Please provide the name of the community"})
+        // }
+        // const comm = await Comm.findOne({name})
         if(!comm){
-            return res.status(401).json({msg: `${name} community does not exist`})
+            return res.status(401).json({msg: "This community does not exist"})
         }
 
         res.status(200).json(comm)
@@ -64,13 +64,13 @@ const createComm = async(req, res)=>{
 const updateComm = async(req, res)=>{
     try{
 
-        const {body:{name},user:{userId}} = req
+        const {params:{id:commId},user:{userId},body:{name}} = req
         
-        const comm = await Comm.findOneAndUpdate({name,userId}, {name}, {new:true, runValidators:true})
+        const comm = await Comm.findByIdAndUpdate({_id:commId,userId}, {name}, {new:true, runValidators:true})
         if(!comm){
-            return res.status(401).json({msg: `${name} community does not exist`})
+            return res.status(401).json({msg: "This community does not exist"})
         }
-        res.status(200).json({msg:'Update successfully'})
+        res.status(200).json({msg:'Update successful'})
 
     }catch(error){
         res.status(500).json({msg: error.message})
@@ -82,17 +82,13 @@ const updateComm = async(req, res)=>{
 const deleteComm = async(req, res)=>{
     try{
 
-        const {body:{name},user:{userId}} = req
-        
-        if(!name){
-            return res.status(400).json({msg: "Please provide the name of the community"})
-        }
+        const {params:{id:commId},user:{userId}} = req        
 
-        const comm = await Comm.findOneAndDelete({name,userId})
+        const comm = await Comm.findByIdAndDelete({_id:commId,creator:userId})
         if(!comm){
-            return res.status(401).json({msg: `${name} community does not exist`})
+            return res.status(401).json({msg: "This community does not exist"})
         }
-        res.status(200).json({msg:`${name} community successfully deleted`})
+        res.status(200).json({msg: "Community successfully deleted"})
 
     }catch(error){
         res.status(500).json({msg: error.message})

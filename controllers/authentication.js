@@ -3,7 +3,8 @@ const User = require('../models/User')
 // Define a function to handle user sign-up
 const signup = async(req,res)=>{
     try{
-        const {email,password} = req.body               
+        const {email,password} = req.body 
+        console.log(req.body)        
 
         //check if email and password were inputted
         if(!email || !password){

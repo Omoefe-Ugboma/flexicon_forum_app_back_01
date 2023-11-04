@@ -22,6 +22,9 @@ const userRoutes = require('./routes/userRoutes')
 //import commRoutes
 const commRoutes = require('./routes/commRoutes')
 
+//import middleware
+const authorize = require('./middleware/authorize')
+
 // Send a welcome message to the client
 app.get('/', (req, res) => {
   res.status(200).send('Welcome to our Server')
@@ -31,7 +34,7 @@ app.get('/', (req, res) => {
 app.use('/api/users',userRoutes);
 
 //calling community endpoints
-app.use('/api/community',commRoutes)
+app.use('/api/community', authorize, commRoutes)
 
 
 // Define an async function to connect to the database and start
