@@ -15,7 +15,7 @@ const createThread = async (req, res) => {
 
   // Create a new thread instance with the user as the creator and empty posts and replies arrays
   const thread = new Thread({
-    Creator: user,
+    creator: user,
     posts: [],
     replies: [],
   })
@@ -24,7 +24,7 @@ const createThread = async (req, res) => {
     // Save the new thread to the database
     const savedThread = await thread.save()
     // Add the new thread to the user's activity array
-    user.activity.threads.push(savedThread)
+    user.activity.threads.push(savedThread._id)
     // Save the updated user to the database
     await user.save()
     // Send the saved thread as a JSON response with a 201 status code

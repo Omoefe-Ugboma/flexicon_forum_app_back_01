@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 
 // Define Thread schema
 const threadSchema = new mongoose.Schema({
-    Creator:{
+    creator:{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true

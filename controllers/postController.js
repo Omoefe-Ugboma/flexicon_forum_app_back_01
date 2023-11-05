@@ -28,7 +28,7 @@ const makePosts = async (req, res) => {
     // Save the new post to the database
     const savedPost = await newPost.save()
     // Add the new post to the thread's posts array
-    thread.posts.push(newPost)
+    thread.posts.push(newPost._id)
     // Save the updated thread to the database
     const savedThread = await thread.save()
     // Send the saved post as a JSON response
