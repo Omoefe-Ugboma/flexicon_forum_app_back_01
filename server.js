@@ -19,14 +19,16 @@ app.use(express.json())
 // Import API Routes
 const userRoutes = require('./routes/userRoutes')
 const threadRoutes = require('./routes/threadRoutes')
-const postRoutes = require('./routes/postRoutes')
-const { verifyToken } = require('./utils/jwt')
+const postRoutes = require('./routes/PostRoutes')
+const replyRoutes = require('./routes/replyRoutes')
+const { verifyUser } = require('./middleware/jwt')
 
 // Using routes as middleware with prefix
 // and verifying user where necessary
 app.use('/api/users', userRoutes)
-app.use('/api/threads', verifyToken, threadRoutes)
-app.use('/api/posts', verifyToken, postRoutes)
+app.use('/api/threads', verifyUser, threadRoutes)
+app.use('/api/posts', verifyUser, postRoutes)
+app.use('/api/replies', verifyUser, replyRoutes)
 
 // Send a welcome message to the client
 app.get('/', (req, res) => {
