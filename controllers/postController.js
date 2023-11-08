@@ -6,14 +6,11 @@ const User = require('../models/User')
 // Function for making posts
 const makePosts = async (req, res) => {
   // Get the user ID from the request object
-  const userId = req.user.userId
+  const author = req.user.userId
   // Destructure the post data from the request body
   const { title, content, category, tags, threadId } = req.body
   // Find the author and the thread using their IDs
-  const [author, thread] = await Promise.all([
-    User.findById({ _id: userId }),
-    Thread.findById({ _id: threadId }),
-  ])
+  const thread = await Thread.findById({ _id: threadId })
 
   // Create a new post instance with the post data
   const newPost = new Post({
@@ -22,7 +19,7 @@ const makePosts = async (req, res) => {
     content,
     tags,
     category,
-    thread,
+    thread: threadId,
   })
   try {
     // Save the new post to the database
@@ -30,7 +27,7 @@ const makePosts = async (req, res) => {
     // Add the new post to the thread's posts array
     thread.posts.push(newPost._id)
     // Save the updated thread to the database
-    const savedThread = await thread.save()
+    await thread.save()
     // Send the saved post as a JSON response
     res.status(201).json(savedPost)
   } catch (error) {

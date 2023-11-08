@@ -15,7 +15,7 @@ const createThread = async (req, res) => {
 
   // Create a new thread instance with the user as the creator and empty posts and replies arrays
   const thread = new Thread({
-    creator: user,
+    creator: userId,
     posts: [],
     replies: [],
   })
