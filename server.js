@@ -13,19 +13,27 @@ const connectDB = require('./db/connect')
 // Define the port numnber for the server
 const port = process.env.PORT || 3000
 
-//add the json middleware to allow the server parse the data
+// Add the json middleware to allow the server parse the data
 app.use(express.json())
 
-//import userRoutes
+// Import API Routes
 const userRoutes = require('./routes/userRoutes')
+const threadRoutes = require('./routes/threadRoutes')
+const postRoutes = require('./routes/PostRoutes')
+const replyRoutes = require('./routes/replyRoutes')
+const { verifyUser } = require('./middleware/jwt')
+
+// Using routes as middleware with prefix
+// and verifying user where necessary
+app.use('/api/users', userRoutes)
+app.use('/api/threads', verifyUser, threadRoutes)
+app.use('/api/posts', verifyUser, postRoutes)
+app.use('/api/replies', verifyUser, replyRoutes)
 
 // Send a welcome message to the client
 app.get('/', (req, res) => {
   res.status(200).send('Welcome to our Server')
 })
-
-//calling user endpoints
-app.use('/api/users',userRoutes);
 
 // Define an async function to connect to the database and start
 const start = async () => {
