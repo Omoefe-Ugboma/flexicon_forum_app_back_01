@@ -3,16 +3,15 @@ const {
   createThread,
   getAllThreads,
   getThreadById,
-  updateThread,
   deleteThread,
 } = require('../controllers/threadController')
+const { authorize } = require('../middleware/jwt')
 
 const Router = express.Router()
 
-Router.route('/').post(createThread)
+Router.route('/').post(authorize, createThread)
 Router.route('/').get(getAllThreads)
 Router.route('/:threadId').get(getThreadById)
-Router.route('/:threadId').put(updateThread)
-Router.route('/threadId').delete(deleteThread)
+Router.route('/:threadId').delete(authorize, deleteThread)
 
 module.exports = Router

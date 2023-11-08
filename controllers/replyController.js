@@ -7,10 +7,10 @@ const Thread = require('../models/Thread');
 // Function for creating replies
 const createReply = async (req, res) => {
   // Extract the user ID from the request
-  const user = req.user.userId;
+  const author = req.user.userId;
   
   // Find the author based on the user ID
-  const author = await User.findById({_id: user});
+  // const author = await User.findById({_id: user});
   
   // Extract content, postId, and threadId from the request body
   const { content, postId, threadId } = req.body;
@@ -26,8 +26,8 @@ const createReply = async (req, res) => {
     const reply = new Reply({
       author,
       content,
-      post,
-      thread 
+      post: postId,
+      thread: threadId 
     });
 
     // Save the reply to the database
@@ -35,7 +35,11 @@ const createReply = async (req, res) => {
 
     // Update the associated post with the new reply's ID
     post.replies.push(savedReply._id);
-    const savedPost = await post.save();
+    await post.save();
+
+    // Update the associated thread with the new reply's ID
+    thread.replies.push(savedReply._id)
+    await thread.save()
 
     // Send the saved reply as a JSON response
     res.json(savedReply);

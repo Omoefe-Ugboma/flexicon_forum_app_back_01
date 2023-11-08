@@ -30,6 +30,11 @@
 							"listen": "test",
 							"script": {
 								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"console.log(jsonData)\r",
+									"postman.setEnvironmentVariable(\"accessToken\", jsonData.accessToken);\r",
+									"postman.setEnvironmentVariable(\"refreshToken\", jsonData.refreshToken);\r",
+									"\r",
 									"pm.test(\"Successful POST request\", function () {\r",
 									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);\r",
 									"});\r",
@@ -76,7 +81,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\": \"{{email}}\",\n    \"password\": \"{{password}}\"\n}",
+							"raw": "{\n    \"email\": \"{{email}}\",\n    \"password\": \"{{password}}\",\n    \"username\":\"{{$randomUserName}}\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -96,10 +101,75 @@
 							]
 						}
 					},
-					"response": []
+					"response": [
+						{
+							"name": "Create User",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\": \"{{email}}\",\n    \"password\": \"{{password}}\",\n    \"username\":\"{{$randomUserName}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{endpoint}}/api/users/v1/signup",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"api",
+										"users",
+										"v1",
+										"signup"
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						},
+						{
+							"name": "Create User with username",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\": \"{{email}}\",\n    \"password\": \"{{password}}\",\n    \"username\":\"{{$randomUserName}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{endpoint}}/api/users/v1/signup",
+									"host": [
+										"{{endpoint}}"
+									],
+									"path": [
+										"api",
+										"users",
+										"v1",
+										"signup"
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						}
+					]
 				},
 				{
-					"name": "Create Session",
+					"name": "Login",
 					"event": [
 						{
 							"listen": "test",
@@ -146,66 +216,14 @@
 					"response": []
 				},
 				{
-					"name": "Get Sessions",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"",
-									"const newAccessToken = responseHeaders['x-access-token']",
-									"",
-									"if(newAccessToken){",
-									"    console.log('Set new access token')",
-									"postman.setEnvironmentVariable(\"accessToken\", newAccessToken);",
-									"}",
-									"",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{accessToken}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [
-							{
-								"key": "x-refresh",
-								"value": "{{refreshToken}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{endpoint}}/api/sessions",
-							"host": [
-								"{{endpoint}}"
-							],
-							"path": [
-								"api",
-								"sessions"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Delete Session",
+					"name": "Logout",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
 									"const newAccessToken = responseHeaders['x-access-token']",
+									"postman.setEnvironmentVariable(\"accessToken\", '')",
 									"",
 									"if(newAccessToken){",
 									"    console.log('Set new access token')",
@@ -241,13 +259,14 @@
 							}
 						],
 						"url": {
-							"raw": "{{endpoint}}/api/sessions",
+							"raw": "{{endpoint}}/api/users/logout",
 							"host": [
 								"{{endpoint}}"
 							],
 							"path": [
 								"api",
-								"sessions"
+								"users",
+								"logout"
 							]
 						}
 					},
@@ -258,6 +277,66 @@
 		{
 			"name": "Community",
 			"item": [
+				{
+					"name": "Get All Communities",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{endpoint}}/api/communities",
+							"host": [
+								"{{endpoint}}"
+							],
+							"path": [
+								"api",
+								"communities"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Community By Id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{endpoint}}/api/communities/{{communityId}}",
+							"host": [
+								"{{endpoint}}"
+							],
+							"path": [
+								"api",
+								"communities",
+								"{{communityId}}"
+							]
+						}
+					},
+					"response": []
+				},
 				{
 					"name": "Create Community",
 					"event": [
@@ -305,7 +384,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"Mobile Development with Flutter\",\n    \"description\": \"Connect with mobile app developers from around the world. Discuss iOS, Android, and cross-platform app development here.\"\n}",
+							"raw": "{\n    \"name\": \"Mobile Development with Sope Mosuro\",\n    \"description\": \"Connect with mobile app developers from around the world. Discuss iOS, Android, and cross-platform app development here.\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -320,48 +399,6 @@
 							"path": [
 								"api",
 								"communities"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Community",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"title\": \"A post title\",\n    \"body\": \"Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{endpoint}}/api/communities/{{communityId}}",
-							"host": [
-								"{{endpoint}}"
-							],
-							"path": [
-								"api",
-								"communities",
-								"{{communityId}}"
 							]
 						}
 					},
@@ -495,12 +532,154 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Get Communities Created By User",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{endpoint}}/api/communities/user/created",
+							"host": [
+								"{{endpoint}}"
+							],
+							"path": [
+								"api",
+								"communities",
+								"user",
+								"created"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Communities joined by a user",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{endpoint}}/api/communities/user/joined",
+							"host": [
+								"{{endpoint}}"
+							],
+							"path": [
+								"api",
+								"communities",
+								"user",
+								"joined"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
 		{
 			"name": "Thread",
 			"item": [
+				{
+					"name": "Get All Threads",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{endpoint}}/api/threads",
+							"host": [
+								"{{endpoint}}"
+							],
+							"path": [
+								"api",
+								"threads"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Thread By Id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{endpoint}}/api/threads/{{threadId}}",
+							"host": [
+								"{{endpoint}}"
+							],
+							"path": [
+								"api",
+								"threads",
+								"{{threadId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Threads Created by User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{endpoint}}/api/threads/user",
+							"host": [
+								"{{endpoint}}"
+							],
+							"path": [
+								"api",
+								"threads",
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
 				{
 					"name": "Create Thread",
 					"event": [
@@ -543,7 +722,8 @@
 							{
 								"key": "x-refresh",
 								"value": "{{refreshToken}}",
-								"type": "text"
+								"type": "text",
+								"disabled": true
 							}
 						],
 						"body": {
@@ -563,48 +743,6 @@
 							"path": [
 								"api",
 								"threads"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Thread",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"title\": \"A post title\",\n    \"body\": \"Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{endpoint}}/api/threads/{{threadId}}",
-							"host": [
-								"{{endpoint}}"
-							],
-							"path": [
-								"api",
-								"threads",
-								"{{threadId}}"
 							]
 						}
 					},
@@ -718,7 +856,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\": \"A post title\",\n    \"body\": \"Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text Some HTML text\"\n}",
+							"raw": "",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -745,74 +883,7 @@
 			"name": "Post",
 			"item": [
 				{
-					"name": "Create Post",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"var jsonData = JSON.parse(responseBody);",
-									"postman.setEnvironmentVariable(\"postId\", jsonData._id);",
-									"",
-									"",
-									"const newAccessToken = responseHeaders['x-access-token']",
-									"",
-									"if(newAccessToken){",
-									"    console.log('Set new access token')",
-									"postman.setEnvironmentVariable(\"accessToken\", newAccessToken);",
-									"}",
-									"",
-									"pm.test(\"Successful POST request\", function () {",
-									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{accessToken}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [
-							{
-								"key": "x-refresh",
-								"value": "{{refreshToken}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"title\": \"Mobile Development with Flutter\",\n    \"content\": \"Connect with mobile app developers from around the world. Discuss iOS, Android, and cross-platform app development here.\",\n    // \"author\": {{userId}},\n    \"category\": \"Mobile Development\",\n    \"thread\": {{threadId}}\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{endpoint}}/api/posts",
-							"host": [
-								"{{endpoint}}"
-							],
-							"path": [
-								"api",
-								"posts"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Post",
+					"name": "Get All Posts",
 					"event": [
 						{
 							"listen": "test",
@@ -848,6 +919,159 @@
 								"api",
 								"posts",
 								"{{postId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Post By Id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{endpoint}}/api/posts/{{postId}}",
+							"host": [
+								"{{endpoint}}"
+							],
+							"path": [
+								"api",
+								"posts",
+								"{{postId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Posts Created by User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{endpoint}}/api/posts/user",
+							"host": [
+								"{{endpoint}}"
+							],
+							"path": [
+								"api",
+								"posts",
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Post",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"postman.setEnvironmentVariable(\"postId\", jsonData._id);",
+									"",
+									"",
+									"const newAccessToken = responseHeaders['x-access-token']",
+									"",
+									"if(newAccessToken){",
+									"    console.log('Set new access token')",
+									"postman.setEnvironmentVariable(\"accessToken\", newAccessToken);",
+									"}",
+									"",
+									"pm.test(\"Successful POST request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const content = pm.environment.replaceIn(\"{{$randomLoremSentences}}\")\r",
+									"const tags = pm.environment.replaceIn(\"{{$randomLoremWords}}\".split())\r",
+									"pm.environment.set(\"content\", content)\r",
+									"pm.environment.set(\"tags\", tags)"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-refresh",
+								"value": "{{refreshToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Mobile Development with Flutter\",\n    \"content\": \"{{content}}\",\n    \"category\": \"Mobile Development\",\n    \"tags\": [\"{{tags}}\"],\n    \"threadId\": \"{{threadId}}\"\n\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{endpoint}}/api/posts",
+							"host": [
+								"{{endpoint}}"
+							],
+							"path": [
+								"api",
+								"posts"
 							]
 						}
 					},
@@ -896,7 +1120,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"AI and Machine Learning Think Tank\",\n    \"description\": \"Join the AI and Machine Learning Think Tank to explore the latest trends, algorithms, and applications in AI and ML.\"\n}",
+							"raw": "{\n    \"title\": \"AI and Machine Learning Think Tank\",\n    \"content\": \"Join the AI and Machine Learning Think Tank to explore the latest trends, algorithms, and applications in AI and ML.\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1034,7 +1258,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"content\": \"{{$randomLoremParagraph}}\",\n    \"thread\": {{threadId}},\n    \"post\": {{postId}}\n}",
+							"raw": "{\n    \"content\": \"{{$randomLoremParagraph}}\",\n    \"threadId\": \"{{threadId}}\",\n    \"postId\": \"{{postId}}\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1055,7 +1279,7 @@
 					"response": []
 				},
 				{
-					"name": "Get Reply",
+					"name": "Get Reply By Id",
 					"event": [
 						{
 							"listen": "test",
@@ -1097,6 +1321,48 @@
 					"response": []
 				},
 				{
+					"name": "Get Replies for a Post",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{endpoint}}/api/replies/{{postId}}",
+							"host": [
+								"{{endpoint}}"
+							],
+							"path": [
+								"api",
+								"replies",
+								"{{postId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Update Reply",
 					"event": [
 						{
@@ -1130,12 +1396,13 @@
 							{
 								"key": "x-refresh",
 								"value": "{{refreshToken}}",
-								"type": "text"
+								"type": "text",
+								"disabled": true
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"content\": {{$randomLoremParagraph}},\n    \"thread\": {{threadId}},\n    \"post\": {{postId}}\n}",
+							"raw": "{\n    \"content\": \"{{$randomLoremParagraph}}\",\n    \"threadId\": \"{{threadId}}\",\n    \"postId\": \"{{postId}}\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"

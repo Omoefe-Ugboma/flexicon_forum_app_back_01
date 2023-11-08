@@ -8,22 +8,21 @@ const createToken = async userId => {
 }
 
 // Verify user's access token
-const authorize = async (req, res, next) => {
-  const authHeader = req.headers.authorization
-
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    res.status(403).json({ msg: 'Access Denied' })
+const verifyToken = async (req, res, next) => {
+  const token = req.header('Authorization').substring(7)
+  if (!token) {
+    return res.status(401).json({ message: 'Access denied. Token missing.' })
   }
-  const token = authHeader.split(' ')[1]
 
   // Token verification
   try {
     const decodedToken = Jwt.verify(token, process.env.JWT_SECRET)
     req.user = decodedToken // Store the decoded token in the request for further use
+    // console.log(decodedToken)
     next() // Token is valid, proceed to the next middleware or route handler
   } catch (err) {
-    return res.status(401).json({ message: 'Authorization Failed' })
+    return res.status(403).json({ message: 'Access denied. Invalid token.' })
   }
 }
 
-module.exports = { createToken, authorize }
+module.exports = { createToken, verifyToken }
