@@ -8,11 +8,13 @@ const createToken = async userId => {
 }
 
 // Verify user's access token
-const verifyUser = async (req, res, next) => {
-  const token = req.header('Authorization').substring(7)
-  if (!token) {
-    return res.status(401).json({ message: 'Access denied. Token missing.' })
+const authorize = async (req, res, next) => {
+  const authHeader = req.headers.authorization
+
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    res.status(403).json({ msg: 'Access Denied' })
   }
+  const token = authHeader.split(' ')[1]
 
   // Token verification
   try {
@@ -20,8 +22,8 @@ const verifyUser = async (req, res, next) => {
     req.user = decodedToken // Store the decoded token in the request for further use
     next() // Token is valid, proceed to the next middleware or route handler
   } catch (err) {
-    return res.status(403).json({ message: 'Access denied. Invalid token.' })
+    return res.status(401).json({ message: 'Authorization Failed' })
   }
 }
 
-module.exports = { createToken, verifyUser }
+module.exports = { createToken, authorize }

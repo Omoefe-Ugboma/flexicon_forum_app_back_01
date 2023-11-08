@@ -2,7 +2,7 @@
 const mongoose = require('mongoose');
 
 //DEFINE COMMUNITY SCHEMA
-const comSchema = new mongoose.Schema({
+const commSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true
@@ -25,6 +25,6 @@ const comSchema = new mongoose.Schema({
 );
 
 // Create the community model
-const Com = mongoose.model('Com', comSchema);
+const Community = mongoose.model('Community', commSchema);
 
-module.exports = Com;
+module.exports = Community;

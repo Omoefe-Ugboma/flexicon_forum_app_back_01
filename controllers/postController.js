@@ -19,7 +19,7 @@ const makePosts = async (req, res) => {
   const newPost = new Post({
     author,
     title,
-    content,  
+    content,
     tags,
     category,
     thread,

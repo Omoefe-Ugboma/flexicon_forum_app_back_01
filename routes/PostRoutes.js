@@ -7,17 +7,18 @@ const {
   updatePost,
   deletePost,
 } = require('../controllers/postController')
+const { authorize } = require('../middleware/jwt')
 
 //creating endpoint for posts
-Router.route('/').post(makePosts)
+Router.route('/').post(authorize, makePosts)
 
 // //endpoint for getting all posts
 Router.route('/:id').get(getPostById)
 
 //updating endpoint for posts
-Router.route('/:id').put(updatePost)
+Router.route('/:id').put(authorize, updatePost)
 
 //deleting endpoint for posts
-Router.route('/:id').delete(deletePost)
+Router.route('/:id').delete(authorize, deletePost)
 
 module.exports = Router
