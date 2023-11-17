@@ -70,7 +70,6 @@ const login = async (req, res) => {
 const addToBlacklist = async (req,res) => {
   try{
     token = req.header('Authorization').substring(7)
-    console.log(token,req.header)
   const blacklist = new BlackList({
     token: token
   })

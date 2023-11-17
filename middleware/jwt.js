@@ -11,7 +11,7 @@ const createToken = async userId => {
 const authorize = async (req, res, next) => {
   const authHeader = req.headers.authorization
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    res.status(403).json({ msg: 'Access Denied' })
+  return res.status(403).json({ msg: 'Access Denied' })
   }
   const token = authHeader.split(' ')[1]
   //check if token is blacklisted
