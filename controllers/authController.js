@@ -1,5 +1,6 @@
 const User = require('../models/User')
-const { createToken } = require('../utils/jwt')
+const { createToken } = require('../middleware/jwt')
+const BlackList = require('../models/Blacklist')
 
 // Define a function to handle user sign-up
 const signup = async (req, res) => {
@@ -66,5 +67,20 @@ const login = async (req, res) => {
     res.status(500).json({ msg: error.message })
   }
 }
+const addToBlacklist = async (req,res) => {
+  try{
+    token = req.header('Authorization').substring(7)
+  const blacklist = new BlackList({
+    token: token
+  })
+  await blacklist.save()
+  return res.status(200).json({message:'logged out successfully'})
+}
+  catch(err){
+    // console.error('Error adding token to blacklist:', err);
+    return res.status(500).json({message:'error logging out successfully'}); 
+   
+  }
+}
 
-module.exports = { signup, login }
+module.exports = { signup, login ,addToBlacklist}

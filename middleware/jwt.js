@@ -1,4 +1,5 @@
 const Jwt = require('jsonwebtoken')
+const BlackList = require('../models/Blacklist')
 
 // Create user's access token
 const createToken = async userId => {
@@ -6,16 +7,18 @@ const createToken = async userId => {
     expiresIn: process.env.JWT_LIFETIME,
   })
 }
-
 // Verify user's access token
 const authorize = async (req, res, next) => {
   const authHeader = req.headers.authorization
-
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    res.status(403).json({ msg: 'Access Denied' })
+  return res.status(403).json({ msg: 'Access Denied' })
   }
   const token = authHeader.split(' ')[1]
-
+  //check if token is blacklisted
+  const blacklisted = await BlackList.findOne({ token })
+ if (blacklisted) {
+  return res.status(403).json({ message: 'Access denied. Token blacklisted.' })
+}
   // Token verification
   try {
     const decodedToken = Jwt.verify(token, process.env.JWT_SECRET)
