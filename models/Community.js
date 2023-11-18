@@ -23,7 +23,8 @@ const commSchema = new mongoose.Schema({
 },
 { timestamps : true}
 );
-
+//create index for querying the model
+commSchema.index({name:"text"})
 // Create the community model
 const Community = mongoose.model('Community', commSchema);
 
