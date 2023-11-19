@@ -1,39 +1,40 @@
 // REPLY MODEL
-const mongoose = require('mongoose');
+const mongoose = require('mongoose')
 
 // Define the reply schema
-const replySchema = new mongoose.Schema({
-  content : {
-      type : String,
-      required : true
-   },
-   author : { 
-      type : mongoose.Schema.Types.ObjectId, 
-      ref : 'User',
-      required : true 
-   }, 
-   
-   votes : { 
-      type : Number, 
-      default :0 
-   },
-
-   Thread :{
+const replySchema = new mongoose.Schema(
+  {
+    content: {
+      type: String,
+      required: true,
+    },
+    author: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Thread',
-      required: true
+      ref: 'User',
+      required: true,
     },
 
-   post : {
+    votes: {
+      type: Number,
+      default: 0,
+    },
+
+    thread: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Thread',
+      required: true,
+    },
+
+    post: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Post',
-      required: true
-   }
-},
-{ timestamps : true}
-);
+      required: true,
+    },
+  },
+  { timestamps: true }
+)
 
 // Create the reply model
-const Reply = mongoose.model('Reply', replySchema);
+const Reply = mongoose.model('Reply', replySchema)
 
-module.exports = Reply;
+module.exports = Reply
