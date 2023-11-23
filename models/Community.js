@@ -18,7 +18,8 @@ const commSchema = new mongoose.Schema({
         required: true
     },    
 
-    post: [{ type : mongoose.Schema.Types.ObjectId, ref : 'Post' }]
+    posts: [{ type : mongoose.Schema.Types.ObjectId, ref : 'Post' }],
+    members: [{ type : mongoose.Schema.Types.ObjectId, ref : 'User', required: true }]
     
 },
 { timestamps : true}
