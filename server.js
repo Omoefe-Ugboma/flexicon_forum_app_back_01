@@ -23,6 +23,7 @@ const threadRoutes = require('./routes/threadRoutes')
 const postRoutes = require('./routes/PostRoutes')
 const replyRoutes = require('./routes/replyRoutes')
 const { verifyUser } = require('./middleware/jwt')
+const searchRoutes = require('./routes/searchRoutes')
 
 // Using routes as middleware with prefix
 // and verifying user where necessary
@@ -31,7 +32,7 @@ app.use('/api/communities', commRoutes)
 app.use('/api/threads', threadRoutes)
 app.use('/api/posts', postRoutes)
 app.use('/api/replies', replyRoutes)
-
+app.use('/api/search', searchRoutes)
 // Send a welcome message to the client
 app.get('/', (req, res) => {
   res.status(200).send('Welcome to our Server')

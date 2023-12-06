@@ -67,20 +67,26 @@ const login = async (req, res) => {
     res.status(500).json({ msg: error.message })
   }
 }
-const addToBlacklist = async (req,res) => {
-  try{
-    token = req.header('Authorization').substring(7)
-  const blacklist = new BlackList({
-    token: token
-  })
-  await blacklist.save()
-  return res.status(200).json({message:'logged out successfully'})
-}
-  catch(err){
-    // console.error('Error adding token to blacklist:', err);
-    return res.status(500).json({message:'error logging out successfully'}); 
-   
+const addToBlacklist = async (req, res) => {
+  try {
+    // Extract the token from the Authorization header
+    const token = req.header('Authorization').substring(7);
+
+    // Create a new BlackList document with the extracted token
+    const blacklist = new BlackList({
+      token: token
+    });
+
+    // Save the BlackList document to the database
+    await blacklist.save();
+
+    // Return a success message if the token is added to the blacklist successfully
+    return res.status(200).json({ message: 'Logged out successfully' });
+  } catch (err) {
+    // Handle any errors that occur during the process
+    return res.status(500).json({ message: 'Error logging out successfully', error: err.message });
   }
-}
+};
+
 
 module.exports = { signup, login ,addToBlacklist}

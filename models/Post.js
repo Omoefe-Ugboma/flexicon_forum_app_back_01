@@ -51,7 +51,8 @@ const postSchema = new mongoose.Schema(
   },
   { timestamps: true }
 )
-
+//create index for querying the model
+postSchema.index({title:"text", content: "text",category: "text"});
 // Create the post model
 const Post = mongoose.model('Post', postSchema)
 

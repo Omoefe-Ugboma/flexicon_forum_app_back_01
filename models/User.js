@@ -58,6 +58,9 @@ userSchema.methods.comparePassword = async function (candidatePassword) {
   return isMatch
 }
 
+//create index for querying the model
+userSchema.index({username:"text"});
+
 // Create the user model
 const User = mongoose.model('User', userSchema)
 
