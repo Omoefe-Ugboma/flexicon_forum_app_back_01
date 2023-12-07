@@ -48,11 +48,13 @@ const postSchema = new mongoose.Schema(
     },
 
     replies: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Reply' }],
+    upvotes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    downvotes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   },
   { timestamps: true }
 )
 //create index for querying the model
-postSchema.index({title:"text", content: "text",category: "text"});
+postSchema.index({ title: 'text', content: 'text', category: 'text' })
 // Create the post model
 const Post = mongoose.model('Post', postSchema)
 

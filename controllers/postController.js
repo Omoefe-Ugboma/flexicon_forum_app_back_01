@@ -1,7 +1,6 @@
 // Import the required models
 const Post = require('../models/Post')
 const Thread = require('../models/Thread')
-const User = require('../models/User')
 
 // Function for making posts
 const makePosts = async (req, res) => {
@@ -111,5 +110,52 @@ const deletePost = async (req, res) => {
   }
 }
 
+// Function to handle votes
+const updateVote = async (req, res) => {
+  // Retrieve user and post ids
+  const voter = req.user.userId
+  const postId = req.params.id
+  routePath = req.path.split('/')[2]
+  console.log(routePath)
+
+  // Upvoting
+  try {
+    // Find the post by its ID
+    const post = await Post.findById(postId)
+    if (routePath == 'upvote') {
+      if(post.upvotes.includes(voter)){
+        post.votes -= 1
+        post.upvotes = post.upvotes.filter(user => !user.upvotes.includes(voter))  
+      } else if(post.downvotes.includes(voter)){
+        post.votes += 2
+        post.downvotes = post.downvotes.filter(user => !user.downvotes.includes(voter))  
+        post.upvotes.push(voter)  
+      } else {
+        post.votes += 1
+        post.upvotes.push(voter)
+      }
+    } else if(routePath == 'downvote'){
+      if(post.downvotes.includes(voter)){
+        post.votes += 1
+        post.downvotes = post.downvotes.filter(user => !user.downvotes.includes(voter))
+      } else if(post.upvotes.includes(voter)){
+        post.votes -= 2
+        post.upvotes = post.upvotes.filter(user => !user.upvotes.includes(voter))  
+        post.downvotes.push(voter) 
+      } else {
+        post.votes -= 1
+        post.downvotes.push(voter)
+      }
+    }
+    console.log(post.votes)
+    await post.save()
+    res.status(200).json(post)
+  } catch (error) {
+    console.log(error.message)
+  }
+
+  // Downvoting
+}
+
 // Export the functions as a module
-module.exports = { makePosts, getPostById, updatePost, deletePost }
+module.exports = { makePosts, getPostById, updatePost, deletePost, updateVote }
