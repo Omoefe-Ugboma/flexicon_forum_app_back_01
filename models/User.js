@@ -40,7 +40,36 @@ const userSchema = new mongoose.Schema(
       badge: { type: mongoose.Schema.Types.ObjectId, ref: 'Badge' },
       threads: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Thread' }],
       communities: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Community' }],
-      reputation: { type: Number, default: 0 },
+      reputation: {
+        type: Number,
+        default: 0,
+        validate: {
+          validator: async function (value) {
+            // Define the reputation thresholds for each badge
+            const thresholds = {
+              Rookie: 0,
+              Hacker: 10,
+              Guru: 50,
+              Ninja: 100,
+              Master: 500,
+            }
+            // Find the highest badge that the user qualifies for
+            let badgeName = 'Rookie'
+            for (let name in thresholds) {
+              if (value >= thresholds[name]) {
+                badgeName = name
+              }
+            }
+            // Find the badge document by name
+            const badge = await Badge.findOne({ name: badgeName })
+            // Assign the badge id to the badge property
+            this.activity.badge = badge._id
+            // Return true to pass the validation
+            return true
+          },
+          message: 'Invalid reputation value',
+        },
+      },
     },
   },
   { timestamps: true }
@@ -55,7 +84,6 @@ userSchema.pre('save', async function (next, done) {
     const rookieBadge = await Badge.findOne({ name: 'Rookie' })
     // Add the badge id to the badge
     this.activity.badge = rookieBadge._id
-    console.log(this.activity.badge)
   }
   // Call the next middleware
   next()
