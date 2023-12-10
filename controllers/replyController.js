@@ -114,4 +114,53 @@ const deleteReplyById = async (req, res) => {
   }
 };
 
-module.exports = { createReply, findReplyById, deleteReplyById, updateReplyById };
+// Function to handle votes
+const updateReplyVote = async (req, res) => {
+  // Retrieve user and reply ids
+  const voter = req.user.userId
+  const replyId = req.params.id
+  routePath = req.path.split('/')[2]
+  console.log(routePath)
+
+  // Voting
+  try {
+    // Find the reply by its ID
+    const reply = await Reply.findById(replyId)
+    const author = await User.findById(reply.author)
+    const initialVote = reply.votes
+    if (routePath == 'upvote') {
+      if(reply.upvotes.includes(voter)){
+        reply.votes -= 1
+        reply.upvotes = reply.upvotes.filter(user => !reply.upvotes.includes(voter))  
+      } else if(reply.downvotes.includes(voter)){
+        reply.votes += 2
+        reply.downvotes = reply.downvotes.filter(user => !reply.downvotes.includes(voter))  
+        reply.upvotes.push(voter)  
+      } else {
+        reply.votes += 1
+        reply.upvotes.push(voter)
+      }
+    } else if(routePath == 'downvote'){
+      if(reply.downvotes.includes(voter)){
+        reply.votes += 1
+        reply.downvotes = reply.downvotes.filter(user => !reply.downvotes.includes(voter))
+      } else if(reply.upvotes.includes(voter)){
+        reply.votes -= 2
+        reply.upvotes = reply.upvotes.filter(user => !reply.upvotes.includes(voter))  
+        reply.downvotes.push(voter) 
+      } else {
+        reply.votes -= 1
+        reply.downvotes.push(voter)
+      }
+    }
+    console.log(reply.votes)
+    author.activity.reputation += reply.votes - initialVote
+    await author.save()
+    await reply.save()
+    res.status(200).json(reply)
+  } catch (error) {
+    console.log(error.message)
+  }
+}
+
+module.exports = { createReply, findReplyById, deleteReplyById, updateReplyById, updateReplyVote };

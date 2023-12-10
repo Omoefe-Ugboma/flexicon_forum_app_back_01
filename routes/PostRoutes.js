@@ -6,6 +6,7 @@ const {
   getPostById,
   updatePost,
   deletePost,
+  updatePostVote,
 } = require('../controllers/postController')
 const { authorize } = require('../middleware/jwt')
 
@@ -20,5 +21,10 @@ Router.route('/:id').put(authorize, updatePost)
 
 //deleting endpoint for posts
 Router.route('/:id').delete(authorize, deletePost)
+
+// Voting System
+Router.route('/:id/upvote').post(authorize, updatePostVote)
+Router.route('/:id/downvote').post(authorize, updatePostVote)
+
 
 module.exports = Router

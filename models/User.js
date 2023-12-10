@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const { generateFromEmail } = require('unique-username-generator')
 const bcrypt = require('bcryptjs')
+const Badge = require('./Badge')
 const jwt = require('jsonwebtoken')
 
 // Define the user schema
@@ -36,7 +37,7 @@ const userSchema = new mongoose.Schema(
       avatar: String,
     },
     activity: {
-      badge: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+      badge: { type: mongoose.Schema.Types.ObjectId, ref: 'Badge' },
       threads: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Thread' }],
       communities: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Community' }],
       reputation: { type: Number, default: 0 },
@@ -44,6 +45,22 @@ const userSchema = new mongoose.Schema(
   },
   { timestamps: true }
 )
+
+// Add a pre-save hook to assign a default badge
+userSchema.pre('save', async function (next, done) {
+  // Check if the document is new
+  if (this.isNew) {
+    // Find the rookie badge by name
+    console.log('I am new')
+    const rookieBadge = await Badge.findOne({ name: 'Rookie' })
+    // Add the badge id to the badge
+    this.activity.badge = rookieBadge._id
+    console.log(this.activity.badge)
+  }
+  // Call the next middleware
+  next()
+  done()
+})
 
 // Mongoose middleware for complex validation
 userSchema.pre('save', async function () {
@@ -59,7 +76,7 @@ userSchema.methods.comparePassword = async function (candidatePassword) {
 }
 
 //create index for querying the model
-userSchema.index({username:"text"});
+userSchema.index({ username: 'text' })
 
 // Create the user model
 const User = mongoose.model('User', userSchema)

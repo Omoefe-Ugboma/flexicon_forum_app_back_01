@@ -1,6 +1,7 @@
 // Import the required models
 const Post = require('../models/Post')
 const Thread = require('../models/Thread')
+const User = require('../models/User')
 
 // Function for making posts
 const makePosts = async (req, res) => {
@@ -111,24 +112,26 @@ const deletePost = async (req, res) => {
 }
 
 // Function to handle votes
-const updateVote = async (req, res) => {
+const updatePostVote = async (req, res) => {
   // Retrieve user and post ids
   const voter = req.user.userId
   const postId = req.params.id
   routePath = req.path.split('/')[2]
   console.log(routePath)
 
-  // Upvoting
+  // Voting
   try {
     // Find the post by its ID
     const post = await Post.findById(postId)
+    const author = await User.findById(post.author)
+    const initialVote = post.votes
     if (routePath == 'upvote') {
       if(post.upvotes.includes(voter)){
         post.votes -= 1
-        post.upvotes = post.upvotes.filter(user => !user.upvotes.includes(voter))  
+        post.upvotes = post.upvotes.filter(user => !post.upvotes.includes(voter))  
       } else if(post.downvotes.includes(voter)){
         post.votes += 2
-        post.downvotes = post.downvotes.filter(user => !user.downvotes.includes(voter))  
+        post.downvotes = post.downvotes.filter(user => !post.downvotes.includes(voter))  
         post.upvotes.push(voter)  
       } else {
         post.votes += 1
@@ -137,10 +140,10 @@ const updateVote = async (req, res) => {
     } else if(routePath == 'downvote'){
       if(post.downvotes.includes(voter)){
         post.votes += 1
-        post.downvotes = post.downvotes.filter(user => !user.downvotes.includes(voter))
+        post.downvotes = post.downvotes.filter(user => !post.downvotes.includes(voter))
       } else if(post.upvotes.includes(voter)){
         post.votes -= 2
-        post.upvotes = post.upvotes.filter(user => !user.upvotes.includes(voter))  
+        post.upvotes = post.upvotes.filter(user => !post.upvotes.includes(voter))  
         post.downvotes.push(voter) 
       } else {
         post.votes -= 1
@@ -148,14 +151,14 @@ const updateVote = async (req, res) => {
       }
     }
     console.log(post.votes)
+    author.activity.reputation += post.votes - initialVote
+    await author.save()
     await post.save()
     res.status(200).json(post)
   } catch (error) {
     console.log(error.message)
   }
-
-  // Downvoting
 }
 
 // Export the functions as a module
-module.exports = { makePosts, getPostById, updatePost, deletePost, updateVote }
+module.exports = { makePosts, getPostById, updatePost, deletePost, updatePostVote }
