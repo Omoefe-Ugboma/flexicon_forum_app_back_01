@@ -17,7 +17,7 @@ const { authorize } = require('../middleware/jwt')
 Router.route('/').get(getComms).post(authorize, createComm)
 Router.route('/:id')
   .get(getAComm)
-  .put(authorize, updateComm)
+  .patch(authorize, updateComm)
   .delete(authorize, deleteComm)
 
 module.exports = Router
