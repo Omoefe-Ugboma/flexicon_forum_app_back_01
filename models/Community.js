@@ -19,7 +19,9 @@ const commSchema = new mongoose.Schema({
     },    
 
     posts: [{ type : mongoose.Schema.Types.ObjectId, ref : 'Post' }],
-    members: [{ type : mongoose.Schema.Types.ObjectId, ref : 'User', required: true }]
+    members: [{ type : mongoose.Schema.Types.ObjectId, ref : 'User', required: true }],
+    moderators: [{ type : mongoose.Schema.Types.ObjectId, ref : 'User', required: true }]
+
     
 },
 { timestamps : true}

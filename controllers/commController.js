@@ -46,6 +46,7 @@ const createComm = async (req, res) => {
 
     req.body.members = userId
     req.body.creator = userId
+    req.body.moderators = userId
 
     let comm = await Comm.findOne({name})
 
@@ -68,10 +69,10 @@ const updateComm = async (req, res) => {
       params: { id: commId },
       user: { userId },
       body: { name },
-      query: { member }
+      query: { member, moderator, id: moderatorId }
     } = req    
 
-    if(name && !member){
+    if(name && !member && !moderator){
       let comm = await Comm.findOne({name})
 
       if(comm){
@@ -90,7 +91,7 @@ const updateComm = async (req, res) => {
 
       return res.status(200).json({ msg: 'Community name updated successful' })
 
-    }else if(member && !name){
+    }else if(member && !name && !moderator){
       if (member == 'join'){
         let comm = await Comm.findOne(
           { _id: commId, members: userId }
@@ -119,7 +120,7 @@ const updateComm = async (req, res) => {
         
         if(comm){
           
-          const comm = await Comm.findByIdAndUpdate(
+          comm = await Comm.findByIdAndUpdate(
           { _id: commId },
           { $pull: { members: userId } },
           { new: true, runValidators: true }          
@@ -134,9 +135,60 @@ const updateComm = async (req, res) => {
       }else{
         return res.status(400).json({msg:"Bad Request"})
       }
+    }else if(moderator && !name && !member){
+      if (moderator == 'add'){
+        let comm = await Comm.findOne(
+          { _id: commId, members: userId }
+          )
+        
+        if(comm){
+          comm = await Comm.findByIdAndUpdate(
+            { _id: commId },
+            { $push: { moderators: moderatorId } },
+            { new: true, runValidators: true }
+          )
+          if(comm){
+            return res.status(200).json({ msg: 'User successfully added as a moderator' })
+          }else{
+            return res.status(200).json({ msg: 'Something went wrong. The user could not be made a moderator' })
+          }
+          
+        }else{
+          return res.status(400).json({ msg: 'Either this community does not exist or you are not authorised to make \
+          a user a moderator in this community' })              
+        }
+        
+      }else if(moderator == 'remove'){
+        let comm = await Comm.findOne(
+          { _id: commId, creator: userId }
+          )
+        
+        if(comm){
+          
+          comm = await Comm.findByIdAndUpdate(
+          { _id: commId },
+          { $pull: { moderators: moderatorId } },
+          { new: true, runValidators: true }          
+          )
+
+          if(comm){
+            return res.status(200).json({ msg: 'Success!!! The user is no longer a moderator' })
+          }else{
+            return res.status(200).json({ msg: 'Something went wrong. The user could not be removed as a moderator' })
+          }
+        }else{
+          return res.status(400).json({ msg: 'Either this community does not exist or you are not authorised to remove \
+        a moderator in this community' })
+          
+        }
+        
+      }else{
+        return res.status(400).json({msg:"Bad Request"})        
+      }
+
     }else{
       return res.status(400).json({msg:"Bad Request"})
-    }
+    }  
     
   }catch(error){
     res.status(500).json({ msg: error.message })
