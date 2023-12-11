@@ -10,6 +10,8 @@ const app = express()
 // Import connect function from db/connect.js file
 const connectDB = require('./db/connect')
 
+const passport = require('passport');
+
 // Define the port numnber for the server
 const port = process.env.PORT || 3000
 
@@ -17,6 +19,7 @@ const port = process.env.PORT || 3000
 app.use(express.json())
 
 // Import API Routes
+app.use(passport.initialize())
 const userRoutes = require('./routes/userRoutes')
 const commRoutes = require('./routes/commRoutes')
 const threadRoutes = require('./routes/threadRoutes')
@@ -27,12 +30,14 @@ const searchRoutes = require('./routes/searchRoutes')
 
 // Using routes as middleware with prefix
 // and verifying user where necessary
+
 app.use('/api/users', userRoutes)
 app.use('/api/communities', commRoutes)
 app.use('/api/threads', threadRoutes)
 app.use('/api/posts', postRoutes)
 app.use('/api/replies', replyRoutes)
 app.use('/api/search', searchRoutes)
+
 // Send a welcome message to the client
 app.get('/', (req, res) => {
   res.status(200).send('Welcome to our Server')

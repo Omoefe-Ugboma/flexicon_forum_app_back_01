@@ -1,5 +1,6 @@
 const Jwt = require('jsonwebtoken')
 const BlackList = require('../models/Blacklist')
+// const passport = require('../passport-setup')
 
 // Create user's access token
 const createToken = async userId => {
@@ -10,6 +11,10 @@ const createToken = async userId => {
 // Verify user's access token
 const authorize = async (req, res, next) => {
   const authHeader = req.headers.authorization
+  // Check for OAuth authentication
+  if (req.isAuthenticated() && req.user.googleId) {
+    return next(); // Proceed if authenticated with OAuth
+  }
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
   return res.status(403).json({ msg: 'Access Denied' })
   }
@@ -30,3 +35,4 @@ const authorize = async (req, res, next) => {
 }
 
 module.exports = { createToken, authorize }
+

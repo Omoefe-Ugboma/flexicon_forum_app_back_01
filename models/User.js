@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const { generateFromEmail } = require('unique-username-generator')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
+const findOrCreate = require('mongoose-findorcreate')
 
 // Define the user schema
 const userSchema = new mongoose.Schema(
@@ -41,6 +42,10 @@ const userSchema = new mongoose.Schema(
       communities: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Community' }],
       reputation: { type: Number, default: 0 },
     },
+
+    // Fields for OAuth
+    googleId: String,
+    googleToken: String,
   },
   { timestamps: true }
 )
@@ -63,5 +68,7 @@ userSchema.index({username:"text"});
 
 // Create the user model
 const User = mongoose.model('User', userSchema)
+
+userSchema.plugin(findOrCreate)
 
 module.exports = User
