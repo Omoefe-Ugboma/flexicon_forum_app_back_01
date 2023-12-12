@@ -30,6 +30,8 @@ const replySchema = new mongoose.Schema(
       ref: 'Post',
       required: true,
     },
+    upvotes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    downvotes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   },
   { timestamps: true }
 )
